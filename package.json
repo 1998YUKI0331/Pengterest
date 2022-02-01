@@ -1,0 +1,52 @@
+{
+  "name": "your-project-name",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "dev": "webpack serve --config ./config/webpack.config.dev.js --mode development --env development",
+    "build": "webpack --config ./config/webpack.config.prod.js --mode production --env production",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "react",
+    "boilerplate",
+    "typescript",
+    "starter"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^17.0.16",
+    "@types/react-dom": "^17.0.9",
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/react-hooks": "^7.0.1",
+    "@svgr/webpack": "^5.5.0",
+    "html-webpack-plugin": "^5.3.1",
+    "fork-ts-checker-webpack-plugin": "^6.3.2",
+    "html-loader": "^2.1.2",
+    "css-loader": "^5.2.6",
+    "file-loader": "^6.2.0",
+    "styled-loader": "*",
+    "url-loader": "^4.1.1",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.2",
+    "ts-jest": "^27.0.4",
+    "jest": "^27.0.6",
+    "jest-transform-stub": "^2.0.0",
+    "dotenv-webpack": "^7.0.3",
+    "react-test-renderer": "16.14.0",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
