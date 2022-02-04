@@ -1,11 +1,13 @@
-import React from 'react';
-import Counter from './Counter';
+import Header from "./components/common/header";
+import MainPage from "./components/pages/mainPage"
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <>
-      <h1>Hello, World!</h1>
-      <Counter />
+      <Header />
+      <div style={{marginTop: "78px"}}>
+        <MainPage />
+      </div>
     </>
   );
 };
