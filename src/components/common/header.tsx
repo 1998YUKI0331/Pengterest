@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
@@ -60,7 +60,7 @@ const Search = styled.div`
 const SearchBar = styled.div<searchProps>`
   background: #F0F0F0;
   color: #767676;
-  width: 97%;
+  width: 96%;
   height: 48px;
   margin: auto;
   border-radius: 30px;
@@ -95,14 +95,20 @@ const SearchWindow = styled.div`
   position: relative;
   top: 3px;
   background: white;
-  height: 350px;
   width: 95%;
-  padding: 0px 20px 10px 20px;
+  padding: 0px 20px 50px 20px;
   border-radius: 0px 0px 20px 20px;
 `;
 
 const SWSection = styled.div`
   color: black;
+`;
+
+const SearchRecordFlex = styled.div`
+  max-width: 820px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 `;
 
 const SearchRecord = styled.div`
@@ -111,9 +117,11 @@ const SearchRecord = styled.div`
   font-weight: 800;
   height: 35px;
   line-height: 35px;
-  margin-right: 10px;
   border-radius: 20px;
   padding: 0px 15px 0px 15px;
+  &:hover {
+    background: #E1E1E1;
+  }
 `;
 
 const FamousGrid = styled.div`
@@ -132,6 +140,9 @@ const FamousPin = styled.div`
   line-height: 85px;
   border-radius: 15px;
   text-align: center;
+  &:hover {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.chosun.com/resizer/5RWpufchdlBjPzWIZnKrDum_yl0=/600x399/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/WO4SKPUA62ESBOT2QY7QB5XTAI.jpg");
+  }
 `;
 
 const Menu = styled.div`
@@ -156,7 +167,7 @@ const ItemSamll = styled.div`
   width: 30px;
   border-radius: 100px;
   margin: auto;
-  margin-left: -5px;
+  margin-left: -10px;
   &:hover {
     background: #F0F0F0;
   }
@@ -164,12 +175,26 @@ const ItemSamll = styled.div`
 
 const ItemSmallIcon = styled.div`
   position: absolute;
-  top: 7px; left: 7px;
+  top: 6px; left: 8px;
 `;
 
 const Header = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
+  const [recentSearch, setRecentSearch] = useState<string[]>(["헬로키티", "헬로키티 배경화면", "이솝 인테리어", "부스터 아파", "핑크 펭귄"]);
+
+  const searchOut = useRef() as React.MutableRefObject<HTMLDivElement>;
+  useEffect(() => {
+    function handleOutsideClick(event: React.BaseSyntheticEvent | MouseEvent) {
+      if (searchOut.current && !searchOut.current.contains(event.target)) {  // 컴포넌트 외부 클릭 시 search 창 안보여줌
+        setSearchFocus(false);
+      }
+    }
+    document.addEventListener('click', handleOutsideClick, true);  // Component rendering 후 이벤트 등록
+    return () => {  // Component 제거 시 이벤트 제거
+      document.removeEventListener('click', handleOutsideClick, true);
+    };
+  }, [searchOut]);
 
   return (
     <Nav>
@@ -180,32 +205,32 @@ const Header = () => {
         <Home>홈</Home>
       </Logo>
       <Search>
-        <SearchBar searchFocus={searchFocus}>
+        <SearchBar searchFocus={searchFocus} ref={searchOut}>
           <SearchIcon searchFocus={searchFocus}><FaSearch /></SearchIcon>
           <SearchInput
             placeholder='검색' searchFocus={searchFocus}
-            onFocus={e => setSearchFocus(true)} onBlur={e => setSearchFocus(false)}
+            onFocus={e => setSearchFocus(true)}
             value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)} 
           />
-        {searchFocus?
+          {searchFocus ?
           <SearchWindow>
+            {recentSearch.length > 0 ?
             <div style={{marginBottom: "15px"}}>
               <div style={{display: "flex"}}>
                 <SWSection>최근 검색 기록</SWSection>
                 <ItemSamll style={{marginTop: "9px", marginLeft: "2px"}}>
-                  <div style={{position: "absolute", top: "-5px", left: "5px"}}>
-                    <IoMdCloseCircle size="20" />
+                  <div style={{position: "absolute", top: "-5.5px", left: "4.5px"}}>
+                    <IoMdCloseCircle size="20" onClick={e => setRecentSearch([])} />
                   </div>
                 </ItemSamll>
               </div>
-              <div style={{display: "flex", marginTop: "-5px"}}>
-                <SearchRecord>헬로키티</SearchRecord>
-                <SearchRecord>헬로키티 배경화면</SearchRecord>
-                <SearchRecord>이솝 인테리어</SearchRecord>
-                <SearchRecord>부스터 아파</SearchRecord>
-                <SearchRecord>핑크 펭귄</SearchRecord>
-              </div>
+              <SearchRecordFlex>
+                {recentSearch.map((search, index) =>
+                  <SearchRecord key={index}>{search}</SearchRecord>
+                )}
+              </SearchRecordFlex>
             </div>
+            :null}
             <div>
               <SWSection>Pengterest에서 인기있는 핀</SWSection>
               <FamousGrid>
@@ -220,7 +245,7 @@ const Header = () => {
               </FamousGrid>
             </div>
           </SearchWindow>
-        :null}
+          :null}
         </SearchBar>
       </Search>
       <Menu>
@@ -234,7 +259,7 @@ const Header = () => {
           <ProfilePic src="https://avatars.githubusercontent.com/u/5829095?v=4"></ProfilePic>
         </Item>
         <ItemSamll>
-          <ItemSmallIcon><FaChevronDown /></ItemSmallIcon>
+          <ItemSmallIcon><FaChevronDown size="14" color="#767676"/></ItemSmallIcon>
         </ItemSamll>
       </Menu>
     </Nav>
