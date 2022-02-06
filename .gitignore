@@ -106,3 +106,5 @@ dist
 
 #etc
 .DS_Store
+
+firebase/key.js
