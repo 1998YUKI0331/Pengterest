@@ -1,8 +1,9 @@
+import { useNavigate } from "react-router-dom"
 import styled from '@emotion/styled'
 import signin_normal from '../assets/btn_google_signin_normal.png'
 import signin_focus from '../assets/btn_google_signin_focus.png'
 
-import { firebaseAuth, signInGoogle } from '../../firebase/firebaseAuth';
+import { signInGoogle } from '../../firebase/firebaseAuth';
 
 const Background = styled.div`
   background: no-repeat center/cover url("http://adwallpapers.xyz/uploads/posts/278940-nature-Penguin-beak-bird-fauna-flightless-bird-vertebrate-king-penguin.jpg");
@@ -62,6 +63,12 @@ const LoginBtn= styled.button`
 `;
 
 const LoginPage: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    signInGoogle();
+    navigate('/');
+  }
+  
   return (
     <Background>
         <section>
@@ -73,7 +80,7 @@ const LoginPage: React.FunctionComponent = () => {
                 />
                 <Welcome>Pengterest에 오신 것을<br />환영합니다</Welcome>
                 <WelcomeSub>시도해 볼 만한 새로운 아이디어 찾기</WelcomeSub>
-                <LoginBtn onClick={e => signInGoogle()}/>
+                <LoginBtn onClick={handleLogin}/>
             </LoginSection>
         </section>
     </Background>

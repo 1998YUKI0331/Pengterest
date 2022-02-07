@@ -1,5 +1,8 @@
+import { useContext } from "react";
 import styled from '@emotion/styled'
 import PinChunk from '@/components/PinChunk/PinChunk';
+import { AuthContext } from "../components/Auth/AuthContext";
+import Loading from "../components/common/loading";
 
 const Wrapper = styled.div`
   column-count: 6;
@@ -23,6 +26,8 @@ const Wrapper = styled.div`
 `;
 
 const MainPage = () => {
+  const userInfo = useContext(AuthContext);
+
   const testImg : string[] = [
     "https://i.pinimg.com/236x/25/d1/4b/25d14b6cb5c34f4101abd61c345b82c9.jpg",
     "https://i.pinimg.com/236x/83/ea/d5/83ead5904adf4ccf630918ed04409f58.jpg",
@@ -52,6 +57,7 @@ const MainPage = () => {
           <PinChunk key={idx} img={img} idx={idx} />
         )}
       </Wrapper>
+      {userInfo ? null : <Loading />}
     </div>
   );
 };

@@ -1,7 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useContext } from 'react'
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
+import ProfileStretch from '../Stretch/ProfileStretch'
+import useOutsideClick from '../../hooks/useOutsideClick'
+import { AuthContext } from "../Auth/AuthContext";
 
 type searchProps = { 
   searchFocus: boolean;
@@ -14,7 +17,7 @@ const Nav = styled.nav`
   display: flex;
   width: 100%;
   height: 78px;
-  z-index: 1;
+  z-index: 2;
 `;
 
 const Logo = styled.div`
@@ -160,6 +163,7 @@ const ProfilePic = styled.img`
   position: absolute;
   top: 10px; left: 10px;
   height: 60%;
+  border-radius: 100px;
 `;
 
 const ItemSamll = styled.div`
@@ -179,23 +183,21 @@ const ItemSmallIcon = styled.div`
   top: 6px; left: 8px;
 `;
 
-const Header = () => {
+const Header: React.FunctionComponent = () => {
+  const userInfo = useContext(AuthContext);
+  const userName: string = userInfo?.displayName || '';
+  const userEmail: string = userInfo?.email || '';
+  const userPicSrc: string = userInfo?.photoURL || '';
+
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const [recentSearch, setRecentSearch] = useState<string[]>(["헬로키티", "헬로키티 배경화면", "이솝 인테리어", "부스터 아파", "핑크 펭귄"]);
+  const [profileFocus, setProfileFocus] = useState<boolean>(false);
 
   const searchOut = useRef() as React.MutableRefObject<HTMLDivElement>;
-  useEffect(() => {
-    function handleOutsideClick(event: React.BaseSyntheticEvent | MouseEvent) {
-      if (searchOut.current && !searchOut.current.contains(event.target)) {  // 컴포넌트 외부 클릭 시 search 창 안보여줌
-        setSearchFocus(false);
-      }
-    }
-    document.addEventListener('click', handleOutsideClick, true);  // Component rendering 후 이벤트 등록
-    return () => {  // Component 제거 시 이벤트 제거
-      document.removeEventListener('click', handleOutsideClick, true);
-    };
-  }, [searchOut]);
+  const profileOut = useRef() as React.MutableRefObject<HTMLDivElement>;
+  useOutsideClick(searchOut, setSearchFocus);
+  useOutsideClick(profileOut, setProfileFocus);
 
   return (
     <Nav>
@@ -257,10 +259,17 @@ const Header = () => {
           <ItemIcon><FaCommentDots size="24" color="#767676"/></ItemIcon>
         </Item>
         <Item>
-          <ProfilePic src="https://avatars.githubusercontent.com/u/5829095?v=4"></ProfilePic>
+          <ProfilePic src={userPicSrc}></ProfilePic>
         </Item>
         <ItemSamll>
-          <ItemSmallIcon><FaChevronDown size="14" color="#767676"/></ItemSmallIcon>
+          <ItemSmallIcon ref={profileOut} onClick={e => setProfileFocus(!profileFocus)}>
+            <FaChevronDown size="14" color="#767676"/>
+            {profileFocus ? 
+              <ProfileStretch 
+                userName={userName} userEmail={userEmail} userPicSrc={userPicSrc} 
+              /> 
+            : null}
+          </ItemSmallIcon>
         </ItemSamll>
       </Menu>
     </Nav>

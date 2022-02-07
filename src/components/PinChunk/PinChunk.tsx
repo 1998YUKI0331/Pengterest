@@ -51,12 +51,17 @@ const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
   const handlePinOut = () => btnHover ? null : setPinHover(false);
 
   return (<>
-    <Pin key={props.idx} onMouseEnter={e => setPinHover(true)} onMouseLeave={handlePinOut}>
+    <Pin key={props.idx}>
     {pinHover ?
       <SaveBtn onMouseEnter={e => setBtnHover(true)} onMouseLeave={e => setBtnHover(false)}
       >저장</SaveBtn>
     : null}
-      <figure><PinImg src={props.img} pinHover={pinHover} /></figure>
+      <figure>
+        <PinImg 
+          src={props.img} pinHover={pinHover}
+          onMouseEnter={e => setPinHover(true)} onMouseLeave={handlePinOut}
+        />
+      </figure>
     </Pin>
   </>);
 };
