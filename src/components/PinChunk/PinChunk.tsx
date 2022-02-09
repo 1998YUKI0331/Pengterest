@@ -9,8 +9,8 @@ const Pin = styled.div`
   figure {
     display: inline-block;
     margin-top: 0em;
-    margin-bottom: 1.5em;
-    margin-left: 6px;
+    margin-bottom: 2em;
+    margin-left: 8px;
     width: 95%;
   }
   img {
@@ -47,19 +47,17 @@ interface PinChunkProps {
 
 const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
   const [pinHover, setPinHover] = useState<boolean>(false);
-  const [btnHover, setBtnHover] = useState<boolean>(false);
-  const handlePinOut = () => btnHover ? null : setPinHover(false);
 
   return (<>
     <Pin key={props.idx}>
     {pinHover ?
-      <SaveBtn onMouseEnter={e => setBtnHover(true)} onMouseLeave={e => setBtnHover(false)}
+      <SaveBtn onMouseEnter={e => setPinHover(true)}
       >저장</SaveBtn>
     : null}
       <figure>
         <PinImg 
           src={props.img} pinHover={pinHover}
-          onMouseEnter={e => setPinHover(true)} onMouseLeave={handlePinOut}
+          onMouseEnter={e => setPinHover(true)} onMouseLeave={e => setPinHover(false)}
         />
       </figure>
     </Pin>

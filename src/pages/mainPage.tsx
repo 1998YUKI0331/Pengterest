@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import styled from '@emotion/styled'
 import PinChunk from '@/components/PinChunk/PinChunk';
 import { AuthContext } from "../components/Auth/AuthContext";
@@ -25,8 +25,9 @@ const Wrapper = styled.div`
   }
 `;
 
-const MainPage = () => {
+const MainPage: React.FunctionComponent = () => {
   const userInfo = useContext(AuthContext);
+  const [imgList, SetImgList] = useState<string[]>([]);
 
   const testImg : string[] = [
     "https://i.pinimg.com/236x/25/d1/4b/25d14b6cb5c34f4101abd61c345b82c9.jpg",
@@ -47,19 +48,56 @@ const MainPage = () => {
     "https://i.pinimg.com/236x/10/98/cb/1098cb71d252e4d50d5bd31323208045.jpg",
     "https://i.pinimg.com/236x/ee/d2/08/eed2087aecd0d2f0a619cb16794699d5.jpg",
     "https://i.pinimg.com/236x/02/d8/67/02d867a36cc0885dfa8e6fcfb1c549ce.jpg",
-    "https://i.pinimg.com/236x/bd/6b/d4/bd6bd40b65b4630437ff8049a2499472.jpg"
+    "https://i.pinimg.com/236x/bd/6b/d4/bd6bd40b65b4630437ff8049a2499472.jpg",
+    "https://i.pinimg.com/236x/ed/fd/85/edfd85898c8fce4a6fdd146bb9155da9.jpg",
+    "https://i.pinimg.com/236x/9c/5b/17/9c5b1768232cabf361b196b316b54335.jpg"
   ];
 
+  const observerRef = useRef<IntersectionObserver>();
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  const Search = () => {
+    SetImgList((curImgList) => [...curImgList, ...testImg]);
+  }
+
+  const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
+    entries.forEach((entry) => {
+        if(entry.isIntersecting) { // 관찰하고 있는 entry가 화면에 보여지는 경우
+            io.unobserve(entry.target); // entry 관찰 해제
+            Search(); // 데이터 가져오기
+        }
+    })
+  }
+
+  useEffect(() => {
+    Search();
+  }, [])
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(intersectionObserver); // IntersectionObserver
+    boxRef.current && observerRef.current.observe(boxRef.current);
+  }, [imgList])
+
   return (
-    <div>
-      <Wrapper>
-        {testImg.map((img, idx) =>
-          <PinChunk key={idx} img={img} idx={idx} />
-        )}
-      </Wrapper>
+    <Wrapper>
+      {imgList.map((item, index) => {
+        if (imgList.length - 20 === index) { // 관찰되는 요소가 있음
+          return (
+            <div ref={boxRef} key={index}>
+              <PinChunk img={item} idx={index} />
+            </div>
+          )
+        } else { // 관찰되는 요소가 없음
+          return (
+            <div key={index}>
+              <PinChunk img={item} idx={index} />
+            </div>
+          )
+        }
+      })}
       {userInfo ? null : <Loading />}
-    </div>
-  );
+    </Wrapper>
+  )
 };
 
 export default MainPage;

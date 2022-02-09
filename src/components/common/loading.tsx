@@ -13,7 +13,7 @@ const Rect = styled.div`
   height: 40px;
   background-color: #333;
 
-  margin: 40vh auto;
+  margin: 45vh auto;
   -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
   animation: sk-rotateplane 1.2s infinite ease-in-out;
 

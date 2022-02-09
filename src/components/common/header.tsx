@@ -1,4 +1,5 @@
-import { useState, useRef, useContext } from 'react'
+import { useState, useRef, useContext, useEffect } from 'react'
+import { useNavigate, useLocation } from "react-router-dom"
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
@@ -8,6 +9,10 @@ import { AuthContext } from "../Auth/AuthContext";
 
 type searchProps = { 
   searchFocus: boolean;
+};
+
+type homeProps = { 
+  checkMain: boolean;
 };
 
 const Nav = styled.nav`
@@ -43,9 +48,9 @@ const LogoImg = styled.img`
   top: 12px; left: 12px;
 `;
 
-const Home = styled.div`
-  background: black;
-  color: white;
+const Home = styled.div<homeProps>`
+  background: ${(props) => (props.checkMain ? "black" : "white")};
+  color: ${(props) => (props.checkMain ? "white" : "black")};
   vertical-align: middle;
   text-align: center;
   margin: auto;
@@ -54,6 +59,9 @@ const Home = styled.div`
   width: 60px;
   font-weight: 800;
   line-height: 48px;
+  &:hover {
+    background: ${(props) => (props.checkMain ? "black" : "#F0F0F0")};
+  }
 `;
 
 const Search = styled.div`
@@ -185,6 +193,9 @@ const ItemSmallIcon = styled.div`
 
 const Header: React.FunctionComponent = () => {
   const userInfo = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const userName: string = userInfo?.displayName || '';
   const userEmail: string = userInfo?.email || '';
   const userPicSrc: string = userInfo?.photoURL || '';
@@ -193,19 +204,24 @@ const Header: React.FunctionComponent = () => {
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
   const [recentSearch, setRecentSearch] = useState<string[]>(["헬로키티", "헬로키티 배경화면", "이솝 인테리어", "부스터 아파", "핑크 펭귄"]);
   const [profileFocus, setProfileFocus] = useState<boolean>(false);
+  const [checkMain, setCheckMain] = useState<boolean>(true);
 
   const searchOut = useRef() as React.MutableRefObject<HTMLDivElement>;
   const profileOut = useRef() as React.MutableRefObject<HTMLDivElement>;
   useOutsideClick(searchOut, setSearchFocus);
   useOutsideClick(profileOut, setProfileFocus);
 
+  useEffect(() => {
+    location.pathname === '/' ? setCheckMain(true) : setCheckMain(false)
+  }, [location.pathname])
+
   return (
     <Nav>
       <Logo>
-        <Item style={{marginLeft: "15px"}}>
+        <Item style={{marginLeft: "15px"}} onClick={e => navigate('/')}>
           <LogoImg src="https://seeklogo.com/images/P/pinterest-logo-8561DDA2E1-seeklogo.com.png" />
         </Item>
-        <Home>홈</Home>
+        <Home onClick={e => navigate('/')} checkMain={checkMain}> 홈</Home>
       </Logo>
       <Search>
         <SearchBar searchFocus={searchFocus} ref={searchOut}>
@@ -258,7 +274,7 @@ const Header: React.FunctionComponent = () => {
         <Item>
           <ItemIcon><FaCommentDots size="24" color="#767676"/></ItemIcon>
         </Item>
-        <Item>
+        <Item onClick={e => navigate('/saved')}>
           <ProfilePic src={userPicSrc}></ProfilePic>
         </Item>
         <ItemSamll>

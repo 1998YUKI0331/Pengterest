@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./components/common/header";
 import MainPage from "./pages/mainPage";
 import LoginPage from "./pages/loginPage";
+import SavedPage from "./pages/savedPage";
+
 
 const App = () => {
   return (
@@ -12,6 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/saved" element={<SavedPage />} />
       </Routes>
       </div>
     </BrowserRouter>
