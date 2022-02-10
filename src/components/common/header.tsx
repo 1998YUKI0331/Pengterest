@@ -289,7 +289,7 @@ const Header: React.FunctionComponent = () => {
         </ItemSamll>
       </Menu>
     </Nav>
-    );
-  };
+  );
+};
   
-  export default Header;
+export default Header;

@@ -10,11 +10,11 @@ const Pin = styled.div`
     display: inline-block;
     margin-top: 0em;
     margin-bottom: 2em;
-    margin-left: 8px;
-    width: 95%;
+    margin-left: 5px;
+    width: 85%;
   }
   img {
-    width: 100%;
+    width: 112%;
   }
 `;
 

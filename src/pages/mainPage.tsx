@@ -1,27 +1,15 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import styled from '@emotion/styled'
-import PinChunk from '@/components/PinChunk/PinChunk';
+import PinChunk from '../components/PinChunk/PinChunk';
 import { AuthContext } from "../components/Auth/AuthContext";
 import Loading from "../components/common/loading";
+import Masonry from "../components/PinChunk/Masonry";
 
 const Wrapper = styled.div`
-  column-count: 6;
-  column-gap: 0px;
-  @media all and (min-width: 1201px) and (max-width: 1500px) {
-    column-count: 5;
-    column-gap: 0.5em;
-  }
-  @media all and (min-width: 1024px) and (max-width: 1200px) {
-    column-count: 4;
-    column-gap: 0.5em;
-  }
-  @media all and (min-width: 768px) and (max-width: 1023px) {
-    column-count: 3;
-    column-gap: 0.5em;
-  }
+  width: 96vw;
+	margin: auto;
   @media all and (max-width: 767px) {
-    column-count: 2;
-    column-gap: 0.2em;
+    width: 92vw;
   }
 `;
 
@@ -53,6 +41,8 @@ const MainPage: React.FunctionComponent = () => {
     "https://i.pinimg.com/236x/9c/5b/17/9c5b1768232cabf361b196b316b54335.jpg"
   ];
 
+  let brakePoints = [350, 500, 750, 780, 920];
+
   const observerRef = useRef<IntersectionObserver>();
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -80,21 +70,23 @@ const MainPage: React.FunctionComponent = () => {
 
   return (
     <Wrapper>
-      {imgList.map((item, index) => {
-        if (imgList.length - 20 === index) { // 관찰되는 요소가 있음
-          return (
-            <div ref={boxRef} key={index}>
-              <PinChunk img={item} idx={index} />
-            </div>
-          )
-        } else { // 관찰되는 요소가 없음
-          return (
-            <div key={index}>
-              <PinChunk img={item} idx={index} />
-            </div>
-          )
-        }
-      })}
+      <Masonry brakePoints={brakePoints}>
+				{imgList.map((item, index) => {
+          if (imgList.length - 15 === index) { // 관찰되는 요소가 있음
+            return (
+              <div ref={boxRef} key={index}>
+                <PinChunk img={item} idx={index} />
+              </div>
+            )
+          } else { // 관찰되는 요소가 없음
+            return (
+              <div key={index}>
+                <PinChunk img={item} idx={index} />
+              </div>
+            )
+          }
+				})}
+			</Masonry>
       {userInfo ? null : <Loading />}
     </Wrapper>
   )
