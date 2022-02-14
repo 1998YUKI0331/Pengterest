@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactChild } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled'
 
 const MasonryDiv = styled.div`
@@ -18,19 +18,24 @@ const Column = styled.div`
   flex-grow: 1;
 `;
 
-const Masonry = (props) => {
-  const [columns, setColumns] = useState(1);
+interface MasonryProps {
+  brakePoints: number[];
+  children: any;  //any 타입 나중에 수정
+}
+
+const Masonry: React.FunctionComponent<MasonryProps> = (props) => {
+  const [columns, setColumns] = useState<number>(1);
   const MasonryRef = useRef<HTMLDivElement>(null);
 
   const onResize = () => {
-    const curColumns = getColumns(MasonryRef.current?.offsetWidth);
-    if(curColumns !== columns){
-      setColumns(curColumns);   
+    if (MasonryRef.current?.offsetWidth) { // number | undefined
+      const curColumns: number = getColumns(MasonryRef.current?.offsetWidth);
+      curColumns !== columns ? setColumns(curColumns) : null;
     }
   }
 
-  const getColumns = (w) => {
-    return props.brakePoints.reduceRight((p, c, i) => {
+  const getColumns = (w: number) => {
+    return props.brakePoints.reduceRight((p: number, c: number, i: number) => {
       return c < w ? p : i;
     }, props.brakePoints.length) + 1;
   }
@@ -42,12 +47,11 @@ const Masonry = (props) => {
    
   const mapChildren = () => {
     let col = [] as any;
-    const numC = columns;
-    for(let i = 0; i < numC; i++){
-      col.push([""]);
+    for (let i = 0; i < columns; i++) {
+      col.push([]);
     }
-    return props.children.reduce((p,c,i) => {
-      p[i%numC].push(c);
+    return props.children.reduce((p: number, c: number, i: number) => {
+      p[i % columns].push(c);
       return p;
     }, col);
    }

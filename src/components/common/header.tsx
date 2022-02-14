@@ -5,13 +5,13 @@ import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
 import ProfileStretch from '../Stretch/ProfileStretch'
 import useOutsideClick from '../../hooks/useOutsideClick'
-import { AuthContext } from "../Auth/AuthContext";
+import { AuthContext } from '../Auth/AuthContext'
 
-type searchProps = { 
+interface searchProps { 
   searchFocus: boolean;
 };
 
-type homeProps = { 
+interface homeProps { 
   checkMain: boolean;
 };
 
@@ -28,6 +28,9 @@ const Nav = styled.nav`
 const Logo = styled.div`
   width: 120px;
   display: flex;
+  @media all and (max-width: 767px) {
+    width: 60px;
+  }
 `;
 
 const Item = styled.div`
@@ -62,11 +65,17 @@ const Home = styled.div<homeProps>`
   &:hover {
     background: ${(props) => (props.checkMain ? "black" : "#F0F0F0")};
   }
+  @media all and (max-width: 767px) {
+    display: none;
+  }
 `;
 
 const Search = styled.div`
   width: calc(100% - (190px + 120px));
   display: flex;
+  @media all and (max-width: 767px) {
+    width: calc(100% - (190px + 60px)); //Logo, Menu 크기 빼줌
+  }
 `;
 
 const SearchBar = styled.div<searchProps>`
@@ -82,6 +91,9 @@ const SearchBar = styled.div<searchProps>`
   border: ${(props) => (props.searchFocus ? "3.5px solid #7FC1FF" : "none")};
   &:hover {
     background: #E1E1E1;
+  }
+  @media all and (max-width: 767px) {
+    width: ${(props) => (props.searchFocus ? "91%" : "96%")};
   }
 `;
 
@@ -103,11 +115,19 @@ const SearchInput = styled.input<searchProps>`
   }
 `;
 
+const Dark = styled.div`
+  position: absolute;
+  top: 78px;
+  width: 100vw; height: 100vh;
+  background: rgb(0, 0, 0, 0.25);
+`;
+
 const SearchWindow = styled.div`
   position: relative;
   top: 3px;
   background: white;
-  width: 95%;
+  width: 95%; 
+  min-width: 330px; max-height: 600px;
   padding: 0px 20px 50px 20px;
   border-radius: 0px 0px 20px 20px;
 `;
@@ -202,7 +222,7 @@ const Header: React.FunctionComponent = () => {
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
-  const [recentSearch, setRecentSearch] = useState<string[]>(["헬로키티", "헬로키티 배경화면", "이솝 인테리어", "부스터 아파", "핑크 펭귄"]);
+  const [recentSearch, setRecentSearch] = useState<string[]>([]);
   const [profileFocus, setProfileFocus] = useState<boolean>(false);
   const [checkMain, setCheckMain] = useState<boolean>(true);
 
@@ -215,8 +235,38 @@ const Header: React.FunctionComponent = () => {
     location.pathname === '/' ? setCheckMain(true) : setCheckMain(false)
   }, [location.pathname])
 
+  useEffect(() => {
+    if (localStorage.getItem('Search')) {
+      setRecentSearch(JSON.parse(localStorage.getItem('Search') || ""))
+    }
+  }, [])
+
+  const searchPin = (searchKeyword: string) => { //Pin 검색
+    // 최근 검색 기록 있는 경우
+    if (localStorage.getItem('Search')) {
+      const localSearch = JSON.parse(localStorage.getItem('Search') || "");
+      if (localSearch.length === 5) { 
+        localSearch.pop();  // 검색 기록 5개면 마지막 요소 삭제
+      }
+      const newLocalSearch: string[] = [searchKeyword, ...localSearch];
+      localStorage.setItem('Search', JSON.stringify(newLocalSearch));
+      console.log(searchKeyword, localSearch.length, newLocalSearch)
+    } 
+    // 최근 검색 기록 없는 경우    
+    else { 
+      localStorage.setItem('Search', JSON.stringify([searchKeyword]));
+    }
+    setRecentSearch(JSON.parse(localStorage.getItem('Search') || ""))
+  }
+
+  const clearRecentSearch = () => {
+    setRecentSearch([]);
+    localStorage.removeItem('Search');
+  }
+
   return (
     <Nav>
+      {searchFocus ? <Dark /> : null}
       <Logo>
         <Item style={{marginLeft: "15px"}} onClick={e => navigate('/')}>
           <LogoImg src="https://seeklogo.com/images/P/pinterest-logo-8561DDA2E1-seeklogo.com.png" />
@@ -227,9 +277,12 @@ const Header: React.FunctionComponent = () => {
         <SearchBar searchFocus={searchFocus} ref={searchOut}>
           <SearchIcon searchFocus={searchFocus}><FaSearch /></SearchIcon>
           <SearchInput
-            placeholder='검색' searchFocus={searchFocus}
+            placeholder='검색' 
+            searchFocus={searchFocus}
             onFocus={e => setSearchFocus(true)}
-            value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)} 
+            value={searchKeyword} 
+            onChange={e => setSearchKeyword(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' ? searchPin(searchKeyword) : null}
           />
           {searchFocus ?
           <SearchWindow>
@@ -239,7 +292,7 @@ const Header: React.FunctionComponent = () => {
                 <SWSection>최근 검색 기록</SWSection>
                 <ItemSamll style={{marginTop: "9px", marginLeft: "2px"}}>
                   <div style={{position: "absolute", top: "-5.5px", left: "4.5px"}}>
-                    <IoMdCloseCircle size="20" onClick={e => setRecentSearch([])} />
+                    <IoMdCloseCircle size="20" onClick={e => clearRecentSearch()} />
                   </div>
                 </ItemSamll>
               </div>

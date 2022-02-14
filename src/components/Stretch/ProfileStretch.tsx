@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import styled from '@emotion/styled';
 import { signOutGoogle } from '../../../firebase/firebaseAuth';
 
-type itemProps = { 
+interface itemProps { 
   hoverItem: Number;
 };
 
