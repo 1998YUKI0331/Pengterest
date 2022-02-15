@@ -5,19 +5,13 @@ const Users = require('../models/User');
 const Pins = require('../models/Pin');
 
 router.post('/', async (req, res) => {
-	Pins.find().exec((err, pin) => {
+	await Pins.find().exec((err, pin) => {
 		res.send(pin);
 	});
 });
 
 router.post('/search', async (req, res) => {
-	Pins.find({ pinKeyword: req.body.pinKeyword }).exec((err, pin) => {
-		res.send(pin);
-	});
-});
-
-router.post('/id', async (req, res) => {
-	Pins.find({ pinId: req.body.pinId }).exec((err, pin) => {
+	await Pins.find({ pinKeyword: req.body.pinKeyword }).exec((err, pin) => {
 		res.send(pin);
 	});
 });

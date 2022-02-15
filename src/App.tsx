@@ -6,6 +6,8 @@ import MainPage from "./pages/mainPage";
 import LoginPage from "./pages/loginPage";
 import SavedPage from "./pages/savedPage";
 import CreatedPage from "./pages/createdPage";
+import SearchPage from "./pages/searchPage";
+import CreatePage from "./pages/createPage";
 
 const App = () => {
   return (
@@ -18,6 +20,8 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/saved" element={<SavedPage />} />
         <Route path="/created" element={<CreatedPage />} />
+        <Route path="/search/:keyword" element={<SearchPage />} />
+        <Route path="/create" element={<CreatePage />} />
       </Routes>
       </div>
     </BrowserRouter>

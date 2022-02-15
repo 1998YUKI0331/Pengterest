@@ -31,7 +31,6 @@ const CreatedPage: React.FunctionComponent = () => {
         userEmail: userEmail
       }
     });
-    console.log(res.data)
     setCreateList((curImgList) => [...curImgList, ...res.data]);
   }
 

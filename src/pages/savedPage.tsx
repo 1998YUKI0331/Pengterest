@@ -31,7 +31,6 @@ const SavedPage: React.FunctionComponent = () => {
         userEmail: userEmail
       }
     });
-    console.log(res.data)
     setSaveList((curImgList) => [...curImgList, ...res.data]);
   }
 

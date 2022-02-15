@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { BsPlusLg, BsQuestionLg } from 'react-icons/bs';
 import useOutsideClick from '../../hooks/useOutsideClick'
@@ -51,6 +52,8 @@ const Item = styled.div<itemProps>`
 `;
 
 const FixedBtn: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+
   const [clickedQustion, setClickedQustion] = useState<boolean>(false);
   const [clickedPlus, setClickedPlus] = useState<boolean>(false);
   const [hoverItem, setHoverItem] = useState<Number>(0);
@@ -86,6 +89,7 @@ const FixedBtn: React.FunctionComponent = () => {
           <Qustion style={{bottom: "153px"}}>
             <Item 
               hoverItem={hoverItem} onMouseOver={e => setHoverItem(1)}
+              onClick={e => navigate('/create')}
             >핀 만들기</Item>
           </Qustion>
         : null}

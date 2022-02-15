@@ -1,5 +1,4 @@
 import { useState, useRef, useContext, useEffect } from 'react'
-import axios from 'axios'
 import { useNavigate, useLocation } from "react-router-dom"
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
@@ -105,10 +104,9 @@ const SearchIcon = styled.div<searchProps>`
 const SearchInput = styled.input<searchProps>`
   border: none;
   background: transparent;
-  color: #767676;
   height: 46px;
   margin-left: ${(props) => (props.searchFocus ? "1px" : "5px")};
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   width: calc(100% - (50px));
   &:focus {
@@ -246,13 +244,6 @@ const Header: React.FunctionComponent = () => {
     }
   }, [])
 
-  const fetchSearchedPins = async (searchKeyword: string) => {
-    const res = await axios.post("http://localhost:8080/pin/search", {
-      pinKeyword: searchKeyword
-    });
-    console.log(res.data);
-  }
-
   const searchPin = (searchKeyword: string) => { //Pin 검색
     // 최근 검색 기록 있는 경우
     if (localStorage.getItem('Search')) {
@@ -270,7 +261,12 @@ const Header: React.FunctionComponent = () => {
       localStorage.setItem('Search', JSON.stringify([searchKeyword]));
     }
     setRecentSearch(JSON.parse(localStorage.getItem('Search') || ""))
-    fetchSearchedPins(searchKeyword);
+    goSearchPage(searchKeyword);
+  }
+
+  const goSearchPage = (searchKeyword: string) => {
+    navigate(`/search/${searchKeyword}`);
+    setSearchFocus(false);
   }
 
   const clearRecentSearch = () => {
@@ -314,7 +310,7 @@ const Header: React.FunctionComponent = () => {
                 {recentSearch.map((search, index) =>
                   <SearchRecord 
                     key={index}
-                    onClick={e => fetchSearchedPins(search)}
+                    onClick={e => {goSearchPage(search); setSearchKeyword(search);}}
                   >{search}</SearchRecord>
                 )}
               </SearchRecordFlex>
