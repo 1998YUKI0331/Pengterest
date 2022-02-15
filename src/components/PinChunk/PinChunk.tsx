@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import styled from '@emotion/styled'
+import { useState, useContext } from 'react';
+import axios from 'axios';
+import styled from '@emotion/styled';
+import { AuthContext } from '../Auth/AuthContext';
 
 type pinProps = { 
   pinHover: boolean;
@@ -47,11 +49,23 @@ interface PinChunkProps {
 
 const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
   const [pinHover, setPinHover] = useState<boolean>(false);
+  const userInfo = useContext(AuthContext);
+  const userEmail: string = userInfo?.email || '';
+
+  const savePins = async () => {
+    const res = await axios.post("http://localhost:8080/user/saved", {
+      userEmail: userEmail,
+      pinId: props.idx
+    });
+    console.log(res.data);
+  }
 
   return (<>
     <Pin key={props.idx}>
     {pinHover ?
-      <SaveBtn onMouseEnter={e => setPinHover(true)}
+      <SaveBtn 
+        onMouseEnter={e => setPinHover(true)}
+        onClick={e => savePins()}
       >저장</SaveBtn>
     : null}
       <figure>

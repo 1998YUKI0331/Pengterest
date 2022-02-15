@@ -16,6 +16,7 @@ const Column = styled.div`
   justify-content: flex-start;
   align-content: stretch;
   flex-grow: 1;
+  width: 10px;
 `;
 
 interface MasonryProps {

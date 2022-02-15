@@ -1,4 +1,5 @@
 import { useState, useRef, useContext, useEffect } from 'react'
+import axios from 'axios'
 import { useNavigate, useLocation } from "react-router-dom"
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
@@ -130,6 +131,10 @@ const SearchWindow = styled.div`
   min-width: 330px; max-height: 600px;
   padding: 0px 20px 50px 20px;
   border-radius: 0px 0px 20px 20px;
+  overflow: auto; //모바일 화면에서 SearchWindow 스크롤 되도록
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const SWSection = styled.div`
@@ -241,22 +246,31 @@ const Header: React.FunctionComponent = () => {
     }
   }, [])
 
+  const fetchSearchedPins = async (searchKeyword: string) => {
+    const res = await axios.post("http://localhost:8080/pin/search", {
+      pinKeyword: searchKeyword
+    });
+    console.log(res.data);
+  }
+
   const searchPin = (searchKeyword: string) => { //Pin 검색
     // 최근 검색 기록 있는 경우
     if (localStorage.getItem('Search')) {
       const localSearch = JSON.parse(localStorage.getItem('Search') || "");
-      if (localSearch.length === 5) { 
+      if (!localSearch.includes(searchKeyword)) {
+        const newLocalSearch: string[] = [searchKeyword, ...localSearch];
+        localStorage.setItem('Search', JSON.stringify(newLocalSearch));
+      }
+      else if (localSearch.length === 5) { 
         localSearch.pop();  // 검색 기록 5개면 마지막 요소 삭제
       }
-      const newLocalSearch: string[] = [searchKeyword, ...localSearch];
-      localStorage.setItem('Search', JSON.stringify(newLocalSearch));
-      console.log(searchKeyword, localSearch.length, newLocalSearch)
     } 
     // 최근 검색 기록 없는 경우    
     else { 
       localStorage.setItem('Search', JSON.stringify([searchKeyword]));
     }
     setRecentSearch(JSON.parse(localStorage.getItem('Search') || ""))
+    fetchSearchedPins(searchKeyword);
   }
 
   const clearRecentSearch = () => {
@@ -298,7 +312,10 @@ const Header: React.FunctionComponent = () => {
               </div>
               <SearchRecordFlex>
                 {recentSearch.map((search, index) =>
-                  <SearchRecord key={index}>{search}</SearchRecord>
+                  <SearchRecord 
+                    key={index}
+                    onClick={e => fetchSearchedPins(search)}
+                  >{search}</SearchRecord>
                 )}
               </SearchRecordFlex>
             </div>

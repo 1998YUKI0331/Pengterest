@@ -1,7 +1,10 @@
-import styled from '@emotion/styled'
-import Profile from '../components/MyPage/Profile';
+import { useEffect, useState, useContext } from "react";
+import axios from 'axios';
+import styled from '@emotion/styled';
 import Masonry from "../components/PinChunk/Masonry";
 import PinChunk from '@/components/PinChunk/PinChunk';
+import Profile from '../components/MyPage/Profile';
+import { AuthContext } from '../components/Auth/AuthContext';
 
 const Wrapper = styled.div`
   width: 96vw;
@@ -11,7 +14,6 @@ const Wrapper = styled.div`
   }
 `;
 
-
 const Comment = styled.h1`
   text-align: center;
   margin-top: 120px;
@@ -19,16 +21,32 @@ const Comment = styled.h1`
 `;
 
 const CreatedPage: React.FunctionComponent = () => {
-  const testImg : string[] = [];
+  const [createList, setCreateList] = useState<string[]>([]);
+  const userInfo = useContext(AuthContext);
+  const userEmail: string = userInfo?.email || '';
+
+  const fetchSavedPins = async () => {
+    const res = await axios.get("http://localhost:8080/user/created", {
+      params: {
+        userEmail: userEmail
+      }
+    });
+    console.log(res.data)
+    setCreateList((curImgList) => [...curImgList, ...res.data]);
+  }
+
+  useEffect(() => {
+    fetchSavedPins();
+  }, [])
 
   return (
     <div>
       <Profile />
-      {testImg.length !== 0 ? 
+      {createList.length !== 0 ? 
         <Wrapper>
           <Masonry brakePoints={[350, 500, 750, 780, 920]}>
-            {testImg.map((img, idx) =>
-              <PinChunk key={idx} img={img} idx={idx} />
+            {createList.map((item, idx) =>
+              <PinChunk key={idx} img={item["pinUrl"]} idx={item["pinId"]} />
             )}
           </Masonry>
         </Wrapper>
