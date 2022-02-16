@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import styled from '@emotion/styled'
 import PinChunk from '../components/PinChunk/PinChunk';
@@ -16,6 +17,7 @@ const Wrapper = styled.div`
 
 const MainPage: React.FunctionComponent = () => {
   const userInfo = useContext(AuthContext);
+  const navigate = useNavigate();
   const [imgList, setImgList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

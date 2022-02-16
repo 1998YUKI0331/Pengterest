@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom"
 import styled from '@emotion/styled'
+import axios from 'axios'
 import signin_normal from '../assets/btn_google_signin_normal.png'
 import signin_focus from '../assets/btn_google_signin_focus.png'
-
-import { signInGoogle } from '../../firebase/firebaseAuth';
+import { firebaseAuth, signInGoogle } from '../../firebase/firebaseAuth';
 
 const Background = styled.div`
   background: no-repeat center/cover url("http://adwallpapers.xyz/uploads/posts/278940-nature-Penguin-beak-bird-fauna-flightless-bird-vertebrate-king-penguin.jpg");
@@ -64,10 +64,14 @@ const LoginBtn= styled.button`
 
 const LoginPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
-  const handleLogin = () => {
-    signInGoogle();
-    navigate('/');
-  }
+
+  const handleLogin = async () => {
+    await signInGoogle();
+    await axios.post("http://localhost:8080/user", {
+      userEmail: firebaseAuth.currentUser?.email
+    });
+    navigate('/main');
+  }  
   
   return (
     <Background>

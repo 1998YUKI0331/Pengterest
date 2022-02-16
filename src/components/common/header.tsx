@@ -1,5 +1,6 @@
 import { useState, useRef, useContext, useEffect } from 'react'
 import { useNavigate, useLocation } from "react-router-dom"
+import axios from 'axios'
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
@@ -13,6 +14,10 @@ interface searchProps {
 
 interface homeProps { 
   checkMain: boolean;
+};
+
+interface famousProps { 
+  pinUrl: string;
 };
 
 const Nav = styled.nav`
@@ -166,9 +171,9 @@ const FamousGrid = styled.div`
   grid-gap: 5px;
 `;
 
-const FamousPin = styled.div`
-  background: no-repeat center/cover url("https://images.chosun.com/resizer/5RWpufchdlBjPzWIZnKrDum_yl0=/600x399/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/WO4SKPUA62ESBOT2QY7QB5XTAI.jpg");
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("https://images.chosun.com/resizer/5RWpufchdlBjPzWIZnKrDum_yl0=/600x399/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/WO4SKPUA62ESBOT2QY7QB5XTAI.jpg");
+const FamousPin = styled.div<famousProps>`
+  background: ${props => `no-repeat center/cover url(${props.pinUrl});`};
+  background-image: ${props => `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${props.pinUrl});`};
   color: white;
   font-weight: 800;
   height: 85px;
@@ -176,7 +181,7 @@ const FamousPin = styled.div`
   border-radius: 15px;
   text-align: center;
   &:hover {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.chosun.com/resizer/5RWpufchdlBjPzWIZnKrDum_yl0=/600x399/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/WO4SKPUA62ESBOT2QY7QB5XTAI.jpg");
+    background-image: ${props => `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${props.pinUrl});`};
   }
 `;
 
@@ -225,7 +230,8 @@ const Header: React.FunctionComponent = () => {
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [searchFocus, setSearchFocus] = useState<boolean>(false);
-  const [recentSearch, setRecentSearch] = useState<string[]>([]);
+  const [recentSearch, setRecentSearch] = useState<string[]>([]); //최근 검색 기록
+  const [famousList, setFamousList] = useState<string[]>([]);     //펭터에서 인기있는 핀
   const [profileFocus, setProfileFocus] = useState<boolean>(false);
   const [checkMain, setCheckMain] = useState<boolean>(true);
 
@@ -235,13 +241,19 @@ const Header: React.FunctionComponent = () => {
   useOutsideClick(profileOut, setProfileFocus);
 
   useEffect(() => {
-    location.pathname === '/' ? setCheckMain(true) : setCheckMain(false)
+    location.pathname === '/main' ? setCheckMain(true) : setCheckMain(false)
   }, [location.pathname])
+
+  const fetchFamous = async () => {
+    const res = await axios.get("http://localhost:8080/famous");
+    setFamousList((curFamousList) => [...curFamousList, ...res.data]);
+  }
 
   useEffect(() => {
     if (localStorage.getItem('Search')) {
       setRecentSearch(JSON.parse(localStorage.getItem('Search') || ""))
     }
+    fetchFamous();
   }, [])
 
   const searchPin = (searchKeyword: string) => { //Pin 검색
@@ -278,10 +290,10 @@ const Header: React.FunctionComponent = () => {
     <Nav>
       {searchFocus ? <Dark /> : null}
       <Logo>
-        <Item style={{marginLeft: "15px"}} onClick={e => navigate('/')}>
+        <Item style={{marginLeft: "15px"}} onClick={e => navigate('/main')}>
           <LogoImg src="https://seeklogo.com/images/P/pinterest-logo-8561DDA2E1-seeklogo.com.png" />
         </Item>
-        <Home onClick={e => navigate('/')} checkMain={checkMain}> 홈</Home>
+        <Home onClick={e => navigate('/main')} checkMain={checkMain}> 홈</Home>
       </Logo>
       <Search>
         <SearchBar searchFocus={searchFocus} ref={searchOut}>
@@ -319,14 +331,12 @@ const Header: React.FunctionComponent = () => {
             <div>
               <SWSection>Pengterest에서 인기있는 핀</SWSection>
               <FamousGrid>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
-                <FamousPin>황제 펭귄</FamousPin>
+                {famousList.map((famous, index) =>
+                  <FamousPin 
+                    key={index} pinUrl={famous["pinUrl"]}
+                    onClick={e => {goSearchPage(famous["pinKeyword"]); setSearchKeyword(famous["pinKeyword"]);}}
+                  >{famous["pinKeyword"]}</FamousPin>
+                )}
               </FamousGrid>
             </div>
           </SearchWindow>

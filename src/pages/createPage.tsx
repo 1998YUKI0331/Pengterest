@@ -6,18 +6,10 @@ import { BiLinkAlt, BiCategoryAlt } from 'react-icons/bi';
 import { AuthContext } from '../components/Auth/AuthContext';
 
 interface inputProps { 
-  urlFocus: boolean;
-  categoryFocus: boolean;
-  urlBlank: boolean;
-  categoryBlank: boolean;
-};
-
-interface urlProps { 
-  urlFocus: boolean;
-};
-
-interface categoryProps { 
-  categoryFocus: boolean;
+  urlFocus?: boolean;
+  categoryFocus?: boolean;
+  urlBlank?: boolean;
+  categoryBlank?: boolean;
 };
 
 const Wrapper = styled.div`
@@ -55,13 +47,13 @@ const InputDiv = styled.div<inputProps>`
   }
 `;
 
-const UrlIcon = styled.span<urlProps>`
+const UrlIcon = styled.span<inputProps>`
   position: relative;
   top: 6px; left: 10px;
   display: ${(props) => (props.urlFocus ? "none" : "inline")};
 `;
 
-const CategoryIcon = styled.span<categoryProps>`
+const CategoryIcon = styled.span<inputProps>`
   position: relative;
   top: 6px; left: 10px;
   display: ${(props) => (props.categoryFocus ? "none" : "inline")};

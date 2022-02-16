@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const router = express.Router();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const PORT = 8080;
@@ -17,8 +16,10 @@ app.use(cors());
 
 const PinRouter = require('./routes/PinRouter');
 const UserRouter = require('./routes/UserRouter');
+const FamousRouter = require('./routes/FamousRouter');
 
 app.use('/pin', PinRouter);
 app.use('/user', UserRouter);
+app.use('/famous', FamousRouter);
 
 app.listen(PORT, () => { console.log(`Listen : ${PORT}`); });

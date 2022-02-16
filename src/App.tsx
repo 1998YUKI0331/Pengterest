@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import Header from "./components/common/header";
 import FixedBtn from "./components/common/fixedBtn";
@@ -16,7 +16,8 @@ const App = () => {
       <Header />
       <div style={{marginTop: "78px"}}>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<Navigate replace to='/login' />}  />
+        <Route path="/main" element={<MainPage />}  />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/saved" element={<SavedPage />} />
         <Route path="/created" element={<CreatedPage />} />
