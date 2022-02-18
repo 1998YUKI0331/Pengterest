@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import axios from 'axios';
+import { axiosGet } from '../api/axios';
 import styled from '@emotion/styled';
 import Masonry from "../components/PinChunk/Masonry";
 import PinChunk from '@/components/PinChunk/PinChunk';
@@ -25,17 +25,15 @@ const CreatedPage: React.FunctionComponent = () => {
   const userInfo = useContext(AuthContext);
   const userEmail: string = userInfo?.email || '';
 
-  const fetchSavedPins = async () => {
-    const res = await axios.get("http://localhost:8080/user/created", {
-      params: {
-        userEmail: userEmail
-      }
+  const fetchCreatedPins = async () => {
+    const createdPins = await axiosGet("user/created", {
+      userEmail: userEmail
     });
-    setCreateList((curImgList) => [...curImgList, ...res.data]);
+    setCreateList((curImgList) => [...curImgList, ...createdPins]);
   }
 
   useEffect(() => {
-    fetchSavedPins();
+    fetchCreatedPins();
   }, [])
 
   return (

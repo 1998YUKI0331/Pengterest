@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import axios from 'axios';
+import { axiosPost } from '../../api/axios';
 import styled from '@emotion/styled';
 import { AuthContext } from '../Auth/AuthContext';
 
@@ -53,11 +53,10 @@ const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
   const userEmail: string = userInfo?.email || '';
 
   const savePins = async () => {
-    const res = await axios.post("http://localhost:8080/user/saved", {
+    await axiosPost('user/saved', {
       userEmail: userEmail,
       pinId: props.idx
     });
-    console.log(res.data);
   }
 
   return (<>

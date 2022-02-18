@@ -1,6 +1,6 @@
 import { useState, useRef, useContext, useEffect } from 'react'
 import { useNavigate, useLocation } from "react-router-dom"
-import axios from 'axios'
+import { axiosGet } from "../../api/axios"
 import styled from '@emotion/styled'
 import { FaSearch, FaBell, FaCommentDots, FaChevronDown } from 'react-icons/fa'
 import { IoMdCloseCircle } from 'react-icons/io'
@@ -245,8 +245,8 @@ const Header: React.FunctionComponent = () => {
   }, [location.pathname])
 
   const fetchFamous = async () => {
-    const res = await axios.get("http://localhost:8080/famous");
-    setFamousList((curFamousList) => [...curFamousList, ...res.data]);
+    const famousPins = await axiosGet('famous');
+    setFamousList((curFamousList) => [...curFamousList, ...famousPins]);
   }
 
   useEffect(() => {
@@ -259,15 +259,14 @@ const Header: React.FunctionComponent = () => {
   const searchPin = (searchKeyword: string) => { //Pin 검색
     // 최근 검색 기록 있는 경우
     if (localStorage.getItem('Search')) {
-      const localSearch = JSON.parse(localStorage.getItem('Search') || "");
-      if (!localSearch.includes(searchKeyword)) {
-        const newLocalSearch: string[] = [searchKeyword, ...localSearch];
-        localStorage.setItem('Search', JSON.stringify(newLocalSearch));
+      let Search: string[] = JSON.parse(localStorage.getItem('Search') || "");
+      Search = Search.filter(keyword => keyword !== searchKeyword);
+      Search = [searchKeyword, ...Search];
+      if (Search.length > 5) {
+        Search.pop();  // 검색 기록 5개면 마지막 요소 삭제
       }
-      else if (localSearch.length === 5) { 
-        localSearch.pop();  // 검색 기록 5개면 마지막 요소 삭제
-      }
-    } 
+      localStorage.setItem('Search', JSON.stringify(Search));
+    }
     // 최근 검색 기록 없는 경우    
     else { 
       localStorage.setItem('Search', JSON.stringify([searchKeyword]));

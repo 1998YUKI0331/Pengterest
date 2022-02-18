@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import axios from 'axios';
+import { axiosGet } from '../api/axios';
 import styled from '@emotion/styled';
 import Masonry from "../components/PinChunk/Masonry";
 import PinChunk from '@/components/PinChunk/PinChunk';
@@ -26,14 +26,12 @@ const SavedPage: React.FunctionComponent = () => {
   const userEmail: string = userInfo?.email || '';
 
   const fetchSavedPins = async () => {
-    const res = await axios.get("http://localhost:8080/user/saved", {
-      params: {
-        userEmail: userEmail
-      }
+    const savedPins = await axiosGet("user/saved", {
+      userEmail: userEmail
     });
-    setSaveList((curImgList) => [...curImgList, ...res.data]);
+    setSaveList((curImgList) => [...curImgList, ...savedPins]);
   }
-
+  
   useEffect(() => {
     fetchSavedPins();
   }, [])

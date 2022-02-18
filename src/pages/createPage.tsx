@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { axiosPost } from '@/api/axios';
 import styled from '@emotion/styled';
 import { BiLinkAlt, BiCategoryAlt } from 'react-icons/bi';
 import { AuthContext } from '../components/Auth/AuthContext';
@@ -106,11 +106,11 @@ const CreatePage: React.FunctionComponent = () => {
 
   const createPin = async () => {
     if (url !== "" && category !== "") {
-      await axios.post("http://localhost:8080/pin/created", {
+      await axiosPost("pin/created", {
         pinId: Math.floor(Math.random() * 10000000),
         pinUrl: url,
         pinCreator: userEmail,
-        pinKeyword: category
+        pinKeyword: category        
       });
       navigate('/created');
     }

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import styled from '@emotion/styled'
-import axios from 'axios'
+import { axiosPost } from "@/api/axios"
 import signin_normal from '../assets/btn_google_signin_normal.png'
 import signin_focus from '../assets/btn_google_signin_focus.png'
 import { firebaseAuth, signInGoogle } from '../../firebase/firebaseAuth';
@@ -67,7 +67,7 @@ const LoginPage: React.FunctionComponent = () => {
 
   const handleLogin = async () => {
     await signInGoogle();
-    await axios.post("http://localhost:8080/user", {
+    await axiosPost("user", {
       userEmail: firebaseAuth.currentUser?.email
     });
     navigate('/main');

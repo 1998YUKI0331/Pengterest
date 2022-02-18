@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
-import axios from 'axios';
+import { axiosPost } from "@/api/axios"
 import styled from '@emotion/styled'
 import PinChunk from '../components/PinChunk/PinChunk';
 import Masonry from "../components/PinChunk/Masonry";
@@ -20,10 +20,10 @@ const SearchPage: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchSearchedPins = async () => {
-    const res = await axios.post("http://localhost:8080/pin/search", {
+    const searchedPins = await axiosPost("pin/search", {
       pinKeyword: keyword
     });
-    setImgList((curImgList) => [...curImgList, ...res.data]);
+    setImgList((curImgList) => [...curImgList, ...searchedPins]);
   };
 
   useEffect(() => {

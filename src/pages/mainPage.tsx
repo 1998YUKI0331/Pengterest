@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { axiosPost } from "@/api/axios"
 import styled from '@emotion/styled'
 import PinChunk from '../components/PinChunk/PinChunk';
 import { AuthContext } from "../components/Auth/AuthContext";
@@ -17,7 +16,6 @@ const Wrapper = styled.div`
 
 const MainPage: React.FunctionComponent = () => {
   const userInfo = useContext(AuthContext);
-  const navigate = useNavigate();
   const [imgList, setImgList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -27,8 +25,8 @@ const MainPage: React.FunctionComponent = () => {
   const boxRef = useRef<HTMLDivElement>(null);
 
   const fetchPins = async () => {
-    const res = await axios.post("http://localhost:8080/pin");
-    setImgList((curImgList) => [...curImgList, ...res.data]);
+    const pins = await axiosPost("pin")
+    setImgList((curImgList) => [...curImgList, ...pins]);
   }
 
   useEffect(() => {
