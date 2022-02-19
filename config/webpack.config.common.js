@@ -66,6 +66,7 @@ module.exports = (env) => {
     plugins: [
       new HtmlWebpackPlugin({
         template: "./src/index.html",
+        favicon: "./src/assets/favicon.ico",
       }),
       new dotenv({
         path: env.production ? "./env/.env" : "./env/dev.env",

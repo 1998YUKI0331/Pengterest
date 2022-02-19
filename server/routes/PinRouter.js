@@ -16,6 +16,12 @@ router.post('/search', async (req, res) => {
 	});
 });
 
+router.post('/detail', async (req, res) => {
+	await Pins.find({ pinId: req.body.pinId }).exec((err, pin) => {
+		res.send(pin);
+	});
+});
+
 router.post('/created', async (req, res) => {
 	await Pins.insertMany({
         pinId: req.body.pinId,

@@ -60,13 +60,13 @@ const MainPage: React.FunctionComponent = () => {
       {imgList.map((item, index) => {
         if (imgList.length - 15 === index) { // 관찰되는 요소가 있음
           return (
-            <div ref={boxRef} key={index}>
+            <div ref={boxRef} key={item["pinId"]}>
               <PinChunk img={item["pinUrl"]} idx={item["pinId"]} />
             </div>
           )
         } else { // 관찰되는 요소가 없음
           return (
-            <div key={index}>
+            <div key={item["pinId"]}>
               <PinChunk img={item["pinUrl"]} idx={item["pinId"]} />
             </div>
           )

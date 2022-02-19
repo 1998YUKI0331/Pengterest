@@ -26,9 +26,9 @@
 |:--:|:--:|
 |![image](https://user-images.githubusercontent.com/67870795/154268463-3116b7a3-c313-4f47-8840-91a9fa1a8f40.png)|![image](https://user-images.githubusercontent.com/67870795/154271169-449b7f9e-4799-438c-96f2-bfc775fb5217.png)|
 
-|검색창 클릭|검색 결과 페이지|
+|검색창 클릭|Pin 상세 보기|
 |:--:|:--:|
-|![image](https://user-images.githubusercontent.com/67870795/154268837-ddeb5191-47cd-46d5-b480-50d3d51876d0.png)|![image](https://user-images.githubusercontent.com/67870795/154269074-998a3a7c-41b4-4fe9-bbe8-c76236451b3d.png)|
+|![image](https://user-images.githubusercontent.com/67870795/154268837-ddeb5191-47cd-46d5-b480-50d3d51876d0.png)|![image](https://user-images.githubusercontent.com/67870795/154797050-80b43255-b9ea-4855-a692-7379ec6e2ad6.png)|
 
 |마이 페이지 (저장/생성 Pin)|Pin 추가 페이지|
 |:--:|:--:|

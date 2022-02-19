@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom"
 import { axiosPost } from '../../api/axios';
 import styled from '@emotion/styled';
 import { AuthContext } from '../Auth/AuthContext';
@@ -48,6 +49,8 @@ interface PinChunkProps {
 }
 
 const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
+  const navigate = useNavigate();
+
   const [pinHover, setPinHover] = useState<boolean>(false);
   const userInfo = useContext(AuthContext);
   const userEmail: string = userInfo?.email || '';
@@ -57,6 +60,10 @@ const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
       userEmail: userEmail,
       pinId: props.idx
     });
+  }
+
+  const goPindetail = (pinId: number) => {
+    navigate(`/pin/${pinId}`);
   }
 
   return (<>
@@ -71,6 +78,7 @@ const PinChunk: React.FunctionComponent<PinChunkProps> = (props) => {
         <PinImg 
           src={props.img} pinHover={pinHover}
           onMouseEnter={e => setPinHover(true)} onMouseLeave={e => setPinHover(false)}
+          onClick={e => goPindetail(props.idx)}
         />
       </figure>
     </Pin>
