@@ -27,7 +27,7 @@ const Nav = styled.nav`
   display: flex;
   width: 100%;
   height: 78px;
-  z-index: 2;
+  z-index: 999;
 `;
 
 const Logo = styled.div`

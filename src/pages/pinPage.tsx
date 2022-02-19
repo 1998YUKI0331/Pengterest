@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { MdOutlineMoreHoriz, MdShare } from 'react-icons/md'
 import { axiosPost } from "@/api/axios";
 import Loading from "../components/common/loading";
-import Inform from "../components/Detail/inform";
+import Dropdown from "../components/common/dropdown";
 import PinChunk from '../components/PinChunk/PinChunk';
 import Masonry from "../components/PinChunk/Masonry";
 import { AuthContext } from "../components/Auth/AuthContext";
@@ -133,7 +133,6 @@ const PinPage: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [imgList, setImgList] = useState<string[]>([]);
 
-
   const [moreHover, setMoreHover] = useState<boolean>(false);
   const [moreClick, setMoreClick] = useState<boolean>(false);
   const [shareHover, setShareHover] = useState<boolean>(false);
@@ -169,6 +168,32 @@ const PinPage: React.FunctionComponent = () => {
     setIsLoading(false);
   }, [location])
 
+  /////////////////////dropdown에 넘겨줄 메소드/////////////////////
+
+  const downloadImg = () => {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", pinUrl, true);
+    xhr.responseType = "blob";
+    xhr.onload = function() {
+      let urlCreator = window.URL || window.webkitURL;
+      let imageUrl = urlCreator.createObjectURL(this.response);
+      let tag = document.createElement('a');
+      tag.href = imageUrl;
+      tag.download = "This is youe peng";
+      document.body.appendChild(tag);
+      tag.click();
+      document.body.removeChild(tag);
+    }
+    xhr.send();
+  }
+
+  const test = () => alert("ff")
+
+  const shareTwitter = () => window.open("https://twitter.com/intent/tweet?url=" + pinUrl)
+  const shareFacebook = () => window.open("http://www.facebook.com/sharer/sharer.php?u=" + pinUrl)
+
+  //////////////////////////////////////////////////////////////////
+
   return (<>
     {isLoading ? 
       <Loading />
@@ -188,10 +213,11 @@ const PinPage: React.FunctionComponent = () => {
                   onClick={e => setMoreClick(true)}
                 />
                 {moreClick?
-                  <Inform 
-                    pinUrl={pinUrl}
+                  <Dropdown 
                     itemList={["이미지 다운로드", "핀 숨기기", "핀 신고", "핀 임베드 코드 가져오기"]}
+                    funcList={[downloadImg, test, test, test]}
                     setClick={setMoreClick}
+                    top={45} left={-23} width={200}
                   />
                 :null}
               </Button>
@@ -203,10 +229,11 @@ const PinPage: React.FunctionComponent = () => {
                   onClick={e => setShareClick(true)}
                 />
                 {shareClick?
-                  <Inform
-                    pinUrl={pinUrl}
+                  <Dropdown
                     itemList={["트위터 공유", "페이스북 공유"]}
+                    funcList={[shareTwitter, shareFacebook]}
                     setClick={setShareClick}
+                    top={45} left={-23} width={200}
                   />
                 :null}
               </Button>
