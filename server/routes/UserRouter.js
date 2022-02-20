@@ -34,16 +34,14 @@ router.post('/saved', async (req, res) => {
 });
 
 router.get('/saved', async (req, res) => {
-    const { userEmail } = req.query;
-	await Users.findOne({ where: {userEmail} }).select('userSavedPins').exec((err, user) => {
-		res.send(user.userSavedPins);
+	await Users.find({ userEmail: req.query.userEmail }).select('userSavedPins').exec((err, user) => {
+		res.send(user[0]);
 	});
 });
 
 router.get('/created', async (req, res) => {
-    const { userEmail } = req.query;
-	await Users.findOne({ where: {userEmail} }).select('userCreatedPins').exec((err, user) => {
-		res.send(user.userCreatedPins);
+	await Users.find({ userEmail: req.query.userEmail }).select('userCreatedPins').exec((err, user) => {
+		res.send(user[0]);
 	});
 });
 
