@@ -3,28 +3,14 @@ import { useLocation, useParams } from "react-router-dom"
 import styled from '@emotion/styled'
 import { MdOutlineMoreHoriz, MdShare } from 'react-icons/md'
 import { axiosPost } from "@/api/axios";
-import Loading from "../components/common/loading";
-import Dropdown from "../components/common/dropdown";
-import PinChunk from '../components/PinChunk/PinChunk';
-import Masonry from "../components/PinChunk/Masonry";
-import { AuthContext } from "../components/Auth/AuthContext";
+import Dropdown from "@/components/common/dropdown";
+import { AuthContext } from "@/components/Auth/AuthContext";
+import Wrapper from "@/components/PinChunk/Wrapper";
 
 interface itemProps {
   moreHover?: boolean;
   shareHover?: boolean;
 }
-
-interface hoverProps {
-  hoverItem: number
-}
-
-const Wrapper = styled.div`
-  width: 96vw;
-  margin: auto;
-  @media all and (max-width: 767px) {
-    width: 92vw;
-  }
-`;
 
 const Detail = styled.div`
   padding: 20px 8px 0px 8px;
@@ -130,8 +116,8 @@ const PinPage: React.FunctionComponent = () => {
 
   const [pinUrl, setPinUrl] = useState<string>("");
   const [pinCreator, setPinCreator] = useState<string>("");
+  const [pinKeyword, setPinKeyword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [imgList, setImgList] = useState<string[]>([]);
 
   const [moreHover, setMoreHover] = useState<boolean>(false);
   const [moreClick, setMoreClick] = useState<boolean>(false);
@@ -146,26 +132,20 @@ const PinPage: React.FunctionComponent = () => {
   }
 
   const fetchDetailPins = async () => {
-    const detailPins = await axiosPost("pin/detail", {
+    await axiosPost("pin/detail", {
       pinId: pinId
-    });
-    setPinUrl(detailPins[0].pinUrl);
-    setPinCreator(detailPins[0].pinCreator);
-    fetchSimilarPins(detailPins[0].pinKeyword);
-  };
-
-  const fetchSimilarPins = async (keyword: string) => {
-    const similarPins = await axiosPost("pin/search", {
-      pinKeyword: keyword
-    });
-    setImgList((curImgList) => [...curImgList, ...similarPins]);
+    })
+      .then(detailPins => {
+        setPinUrl(detailPins[0].pinUrl);
+        setPinCreator(detailPins[0].pinCreator);
+        setPinKeyword(detailPins[0].pinKeyword);
+        setIsLoading(false);
+      })
   };
 
   useEffect(() => {
-    setImgList([]);
     setIsLoading(true);
     fetchDetailPins();
-    setIsLoading(false);
   }, [location])
 
   /////////////////////dropdown에 넘겨줄 메소드/////////////////////
@@ -196,7 +176,7 @@ const PinPage: React.FunctionComponent = () => {
 
   return (<>
     {isLoading ? 
-      <Loading />
+      null
     : 
       <Detail>
         <Box>
@@ -247,13 +227,11 @@ const PinPage: React.FunctionComponent = () => {
           </Box>
         </Box>
         <Saction>유사한 핀 더 보기</Saction>
-        <Wrapper>
-          <Masonry brakePoints={[350, 500, 750, 780, 920]}>
-            {imgList.map((item, idx) =>
-              <PinChunk key={idx} img={item["pinUrl"]} idx={item["pinId"]} />
-            )}
-          </Masonry>
-        </Wrapper>
+        <Wrapper
+          fetchUrl={"pin/search"}
+          request={{pinKeyword: pinKeyword}}
+          method={"POST"}
+        />
       </Detail>
     }
   </>);

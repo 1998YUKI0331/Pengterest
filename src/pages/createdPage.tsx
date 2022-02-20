@@ -1,18 +1,8 @@
 import { useEffect, useState, useContext } from "react";
-import { axiosGet } from '../api/axios';
 import styled from '@emotion/styled';
-import Masonry from "../components/PinChunk/Masonry";
-import PinChunk from '@/components/PinChunk/PinChunk';
-import Profile from '../components/MyPage/Profile';
-import { AuthContext } from '../components/Auth/AuthContext';
-
-const Wrapper = styled.div`
-  width: 96vw;
-	margin: auto;
-  @media all and (max-width: 767px) {
-    width: 92vw;
-  }
-`;
+import Wrapper from '@/components/PinChunk/Wrapper';
+import Profile from '@/components/MyPage/Profile';
+import { AuthContext } from '@/components/Auth/AuthContext';
 
 const Comment = styled.h1`
   text-align: center;
@@ -21,37 +11,37 @@ const Comment = styled.h1`
 `;
 
 const CreatedPage: React.FunctionComponent = () => {
-  const [createList, setCreateList] = useState<string[]>([]);
   const userInfo = useContext(AuthContext);
   const userEmail: string = userInfo?.email || '';
 
-  const fetchCreatedPins = async () => {
-    const createdPins = await axiosGet("user/created", {
-      userEmail: userEmail
-    });
-    setCreateList((curImgList) => [...curImgList, ...createdPins]);
-  }
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pinCnt, setPinCnt] = useState(-1); //pin 개수
 
   useEffect(() => {
-    fetchCreatedPins();
-  }, [])
+    if (userEmail) {
+      setIsLoading(false);
+    }
+  }, [userEmail])
 
   return (
     <div>
+    {isLoading ?
+      null
+    :
+    <>
       <Profile />
-      {createList.length !== 0 ? 
-        <Wrapper>
-          <Masonry brakePoints={[350, 500, 750, 780, 920]}>
-            {createList.map((item, idx) =>
-              <PinChunk key={idx} img={item["pinUrl"]} idx={item["pinId"]} />
-            )}
-          </Masonry>
-        </Wrapper>
+      {pinCnt === 0 ?
+        <Comment>아직 생성된 핀 없음</Comment>
       :
-        <div>
-          <Comment>아직 생성된 핀 없음</Comment>
-        </div>
+        <Wrapper
+          fetchUrl={"user/created"}
+          request={{userEmail: userEmail}}
+          method={"GET"}
+          setPinCnt={setPinCnt}
+        />
       }
+    </>
+    }
     </div>
   )
 };

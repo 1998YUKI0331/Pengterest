@@ -11,7 +11,7 @@ const Background = styled.div`
   height: 100vh;
   position: absolute;
   top: 0;
-  z-index: 100;
+  z-index: 9999;
   section {
     display: flex;
     height: 100%;
