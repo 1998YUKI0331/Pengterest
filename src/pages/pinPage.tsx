@@ -6,6 +6,7 @@ import { axiosPost } from "@/api/axios";
 import Dropdown from "@/components/common/dropdown";
 import { AuthContext } from "@/components/Auth/AuthContext";
 import Wrapper from "@/components/PinChunk/Wrapper";
+import SaveBtn from '@/components/common/saveBtn';
 
 interface itemProps {
   moreHover?: boolean;
@@ -88,19 +89,6 @@ const Button = styled.button<itemProps>`
   }
 `;
 
-const SaveBtn = styled.button`
-  float: right;
-  background: red;
-  border-radius: 30px; border: none;
-  height: 48px; width: 68px;
-  color: white;
-  font-weight: 800; font-size: 1rem;
-  line-height: 48px;
-  &:hover {
-    background: #AD081B;
-  }
-`;
-
 const Saction = styled.p`
   margin-top: 50px;
   font-weight: 800;
@@ -123,13 +111,6 @@ const PinPage: React.FunctionComponent = () => {
   const [moreClick, setMoreClick] = useState<boolean>(false);
   const [shareHover, setShareHover] = useState<boolean>(false);
   const [shareClick, setShareClick] = useState<boolean>(false);
-
-  const savePins = async () => {
-    await axiosPost('user/saved', {
-      userEmail: userEmail,
-      pinId: pinId
-    });
-  }
 
   const fetchDetailPins = async () => {
     await axiosPost("pin/detail", {
@@ -218,7 +199,9 @@ const PinPage: React.FunctionComponent = () => {
                 :null}
               </Button>
               <SaveBtn 
-                onClick={e => savePins()}
+                userEmail={userEmail}
+                pinId={Number(pinId)}
+                top={15} right={20}
               >저장</SaveBtn>
             </ItemDiv>
             <CreatorDiv>

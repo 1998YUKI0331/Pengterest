@@ -66,18 +66,20 @@ const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
   }
 
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(intersectionObserver); // IntersectionObserver
-    boxRef.current && observerRef.current.observe(boxRef.current);
-  }, [imgList])
+    if (imgList.length > 20) {
+      observerRef.current = new IntersectionObserver(intersectionObserver); // IntersectionObserver
+      boxRef.current && observerRef.current.observe(boxRef.current);
+    }
+  }, [imgList]) //관찰되는 요소 있을 때마다
 
   return (
-    <WrapperDiv>
+    <WrapperDiv ref={boxRef}>
     {isLoading ? 
       <Loading />
     : 
       <Masonry brakePoints={brakePoints}>
       {imgList.map((item, index) => {
-        if (imgList.length - 15 === index) { // 관찰되는 요소가 있음
+        if (imgList.length - 5 === index) { // 관찰되는 요소가 있음
           return (
             <div ref={boxRef} key={index}>
               <PinChunk img={item["pinUrl"]} idx={item["pinId"]} />
@@ -85,7 +87,7 @@ const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
           )
         } else { // 관찰되는 요소가 없음
           return (
-            <div key={index}>
+            <div ref={boxRef} key={index}>
               <PinChunk img={item["pinUrl"]} idx={item["pinId"]} />
             </div>
           )
