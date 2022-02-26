@@ -16,10 +16,7 @@ const WrapperDiv = styled.div`
 `;
 
 interface wrapperProps {
-  fetchUrl: string;
-  request?: object;
-  method: "POST" | "GET";
-  setPinCnt?: (value: number) => void;
+  fetchPins: () => Promise<any>;
 }
 
 const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
@@ -34,16 +31,8 @@ const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
   const observerRef = useRef<IntersectionObserver>();
   const boxRef = useRef<HTMLDivElement>(null);
 
-  const fetchPins = async () => {
-    let pins = []
-    if (props.method === "POST") {
-      pins = await axiosPost(props.fetchUrl, props.request);
-    }
-    else if (props.method === "GET") {
-      pins = await axiosGet(props.fetchUrl, props.request);
-      pins = Object.values(pins)[1]; //object to array
-      if (props.setPinCnt) props.setPinCnt(pins.length);
-    }
+  const fetchData = async () => {
+    const pins = await props.fetchPins();
     setImgList((curImgList) => [...curImgList, ...pins]);
     setIsLoading(false);
   }
@@ -51,7 +40,7 @@ const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
   useEffect(() => {
     setImgList([]);
     setIsLoading(true);
-    fetchPins();
+    fetchData();
   }, [location])
 
   const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
@@ -59,7 +48,7 @@ const Wrapper: React.FunctionComponent<wrapperProps> = (props) => {
         if(entry.isIntersecting) { // 관찰하고 있는 entry가 화면에 보여지는 경우
             io.unobserve(entry.target); // entry 관찰 해제
             setIsLoading(true);
-            fetchPins(); // 데이터 가져오기
+            fetchData(); // 데이터 가져오기
             setIsLoading(false);
         }
     })

@@ -124,6 +124,8 @@ const PinPage: React.FunctionComponent = () => {
       })
   };
 
+  const fetchSimilarPins = async () => await axiosPost("pin/search", {pinKeyword: pinKeyword});
+
   useEffect(() => {
     setIsLoading(true);
     fetchDetailPins();
@@ -211,9 +213,7 @@ const PinPage: React.FunctionComponent = () => {
         </Box>
         <Saction>유사한 핀 더 보기</Saction>
         <Wrapper
-          fetchUrl={"pin/search"}
-          request={{pinKeyword: pinKeyword}}
-          method={"POST"}
+          fetchPins={fetchSimilarPins}
         />
       </Detail>
     }

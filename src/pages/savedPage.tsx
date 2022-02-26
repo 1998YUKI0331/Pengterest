@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import Wrapper from '@/components/PinChunk/Wrapper';
 import Profile from '@/components/MyPage/Profile';
 import { AuthContext } from '@/components/Auth/AuthContext';
+import { axiosGet } from "@/api/axios";
 
 const Comment = styled.h1`
   text-align: center;
@@ -16,6 +17,13 @@ const SavedPage: React.FunctionComponent = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pinCnt, setPinCnt] = useState(-1); //pin 개수
+
+  const fetchSavedPins = async () => {
+    let pins = await axiosGet("user/saved", {userEmail: userEmail});
+    pins = Object.values(pins)[1]; //object to array
+    if (pins.length === 0) setPinCnt(0);
+    return pins;
+  }
 
   useEffect(() => {
     if (userEmail) {
@@ -34,10 +42,7 @@ const SavedPage: React.FunctionComponent = () => {
         <Comment>아직 저장된 핀 없음</Comment>
       :
         <Wrapper
-          fetchUrl={"user/saved"}
-          request={{userEmail: userEmail}}
-          method={"GET"}
-          setPinCnt={setPinCnt}
+          fetchPins={fetchSavedPins}
         />
       }
     </>
